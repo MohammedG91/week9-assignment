@@ -2,21 +2,26 @@ import { db } from "@/utils/dbConnection";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export default async function CreateProfile({ params }) {
+export default async function UpdateProfile({ params }) {
   const slug = await params;
 
-  async function handleSubmit(formValues) {
+  const user = await db.query(`SELECT * FROM profile WHERE clerkid=$1`, [
+    slug.id,
+  ]);
+
+  const wrangleduser = user.rows[0];
+  console.log(wrangleduser);
+
+  async function handleUpdate(formData) {
     "use server";
 
-    const username = formValues.get("username");
-    const about = formValues.get("about");
-    const clerkid = slug.id;
+    const username = formData.get("username");
+    const about = formData.get("about");
 
-    db.query(
-      `INSERT INTO profile (clerkid,username,about) VALUES ($1, $2, $3)`,
-      [clerkid, username, about]
+    await db.query(
+      `UPDATE profile SET username =$1, about =$2 WHERE clerkid=$3`,
+      [username, about, slug.id]
     );
-
     revalidatePath("/profile");
 
     redirect("/profile");
@@ -24,10 +29,10 @@ export default async function CreateProfile({ params }) {
 
   return (
     <div className="flex flex-col items-center justify-center p-1 border min-w-full bg-slate-400 border-gray-300 rounded-lg shadow-lg">
-      <h1>create profile</h1>
+      <h1>Update profile</h1>
 
       <form
-        action={handleSubmit}
+        action={handleUpdate}
         className="flex flex-col justify-center items-center border-2 border-solid border-gray-500 w-[25rem] p-6 rounded-lg"
       >
         <label htmlFor="username">username: </label>
@@ -37,6 +42,7 @@ export default async function CreateProfile({ params }) {
           name="username"
           id="username"
           required
+          defaultValue={wrangleduser.username}
           className="text-emerald-600"
         />
 
@@ -46,6 +52,7 @@ export default async function CreateProfile({ params }) {
           name="about"
           id="about"
           required
+          defaultValue={wrangleduser.about}
           className="text-emerald-600  h-20"
         />
 
@@ -53,7 +60,7 @@ export default async function CreateProfile({ params }) {
           type="submit"
           className="border-amber-600 border-4 m-4 hover:bg-sky-700"
         >
-          Submit your profile
+          update your profile
         </button>
       </form>
     </div>
