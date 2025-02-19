@@ -9,10 +9,10 @@ export default function Header() {
           Home
         </Link>
 
-        <Link href={"/"} className={headerStyles.navLink}>
+        <Link href={"/post"} className={headerStyles.navLink}>
           Posts
         </Link>
-        <Link href={"/"} className={headerStyles.navLink}>
+        <Link href={"/profile"} className={headerStyles.navLink}>
           Profile
         </Link>
       </nav>
