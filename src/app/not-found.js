@@ -10,7 +10,7 @@ export default function notFound() {
       </h1>
       <nav>
         <Link
-          href="/posts"
+          href="/post"
           className="text-black hover:bg-blue-300 w-full mt-6 p-1 rounded-md border-2 bg-blue-200 text-center"
         >
           All Posts
